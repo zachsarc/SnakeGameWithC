@@ -38,13 +38,28 @@ void init_direction() { // Set the snake in a random initial direction (JK)
 
 
 void handle_input(){
-    //Check user's input (keys) and update directions
+    //Check user's input (keys) and update directions (ZL)
+    if (_kbhit()) {
+        switch (tolower(getch())) {
+            case 'a': if (key != 2) key = 1; break; // Left
+            case 'd': if (key != 1) key = 2; break; // Right
+            case 'w': if (key != 4) key = 3; break; // Up
+            case 's': if (key != 3) key = 4; break; // Down
+            case 'x': gameover = 1; break; // Exit
+        }
+    }
 }
 
 
 
 void move_snake(){
-//move the snake forward, changing the direction by +-1 in y or +-1 in x.
+//move the snake forward, changing the direction by +-1 in y or +-1 in x. (ZL)
+switch (key) {
+    case 1: x--; break; // Left
+    case 2: x++; break // Right
+    case 3: y--; break // Up
+    case 4: y++; break // Down
+}
 }
 
 
