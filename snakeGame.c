@@ -41,7 +41,7 @@ void init_direction() { // Set the snake in a random initial direction (JK)
 void handle_input(){
     //Check user's input (keys) and update directions (ZL)
     if (_kbhit()) {
-        switch (tolower(getch())) {
+        switch (tolower(_getch())) {
             case 'a': if (key != 2) key = 1; break; // Left
             case 'd': if (key != 1) key = 2; break; // Right
             case 'w': if (key != 4) key = 3; break; // Up
