@@ -17,7 +17,7 @@ Segment snake[MAX_LENGTH];
 int length = 5;
 
 int dir_x, dir_y;
-
+int gameover = 0;
 
 // Initializes the snake in the center of the screen (JK)
 void init_snake() {
@@ -29,7 +29,7 @@ void init_snake() {
         snake[i].y = start_y;
     }
 }
-void init_direction() { // Set the snake in a random initial direction (JK)
+void init_direction() { // Set the snake in a random initial direction (JK) ---------Switch case here that combines these 2?!!!!! 
     int dirs[4][2] = {{1,0}, {-1,0}, {0,1}, {0,-1}};
     int r = rand() % 4;
     dir_x = dirs[r][0];
@@ -50,7 +50,7 @@ void handle_input(){
         }
     }
 }
-
+//------------------------------------------------------------------------
 
 
 void move_snake(){
