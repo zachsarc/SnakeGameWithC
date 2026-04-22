@@ -29,7 +29,7 @@ void init_snake() {
         snake[i].y = start_y;
     }
 }
-void handle_input() { // Primary author: ZL - Check keyboard input and update snake direction
+void handle_input() { //keyboard input and change snake direction
     int ch = getch();
 
     if (ch != ERR) {
@@ -88,14 +88,13 @@ void handle_input() { // Primary author: ZL - Check keyboard input and update sn
 //------------------------------------------------------------------------
 
 
-void move_snake(){
-//move the snake forward, changing the direction by +-1 in y or +-1 in x. (ZL)
-switch (key) {
-    case 1: x--; break; // Left
-    case 2: x++; break // Right
-    case 3: y--; break // Up
-    case 4: y++; break // Down
-}
+void move_snake() { //Move the snake forward and update head position
+    for (int i = length - 1; i > 0; i--) {
+        snake[i] = snake[i - 1];
+    }
+
+    snake[0].x += dir_x;
+    snake[0].y += dir_y;
 }
 
 
