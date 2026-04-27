@@ -17,7 +17,7 @@ Segment snake[MAX_LENGTH];
 int length = 5;
 
 int dir_x, dir_y;
-
+int gameover = 0;
 
 // Initializes the snake in the center of the screen (JK)
 void init_snake() {
@@ -29,38 +29,72 @@ void init_snake() {
         snake[i].y = start_y;
     }
 }
-void init_direction() { // Set the snake in a random initial direction (JK)
-    int dirs[4][2] = {{1,0}, {-1,0}, {0,1}, {0,-1}};
-    int r = rand() % 4;
-    dir_x = dirs[r][0];
-    dir_y = dirs[r][1];
-}
+void handle_input() { //keyboard input and change snake direction
+    int ch = getch();
 
+    if (ch != ERR) {
+        switch (ch) {
+            case KEY_LEFT:
+            case 'a':
+            case 'A':
+                if (dir_x == 1) {
+                    gameover = 1;
+                } else {
+                    dir_x = -1;
+                    dir_y = 0;
+                }
+                break;
 
+            case KEY_RIGHT:
+            case 'd':
+            case 'D':
+                if (dir_x == -1) {
+                    gameover = 1;
+                } else {
+                    dir_x = 1;
+                    dir_y = 0;
+                }
+                break;
 
-void handle_input(){
-    //Check user's input (keys) and update directions (ZL)
-    if (_kbhit()) {
-        switch (tolower(_getch())) {
-            case 'a': if (key != 2) key = 1; break; // Left
-            case 'd': if (key != 1) key = 2; break; // Right
-            case 'w': if (key != 4) key = 3; break; // Up
-            case 's': if (key != 3) key = 4; break; // Down
-            case 'x': gameover = 1; break; // Exit
+            case KEY_UP:
+            case 'w':
+            case 'W':
+                if (dir_y == 1) {
+                    gameover = 1;
+                } else {
+                    dir_x = 0;
+                    dir_y = -1;
+                }
+                break;
+
+            case KEY_DOWN:
+            case 's':
+            case 'S':
+                if (dir_y == -1) {
+                    gameover = 1;
+                } else {
+                    dir_x = 0;
+                    dir_y = 1;
+                }
+                break;
+
+            case 'x':
+            case 'X':
+                gameover = 1;
+                break;
         }
     }
 }
+//------------------------------------------------------------------------
 
 
+void move_snake() { //Move the snake forward and update head position
+    for (int i = length - 1; i > 0; i--) {
+        snake[i] = snake[i - 1];
+    }
 
-void move_snake(){
-//move the snake forward, changing the direction by +-1 in y or +-1 in x. (ZL)
-switch (key) {
-    case 1: x--; break; // Left
-    case 2: x++; break // Right
-    case 3: y--; break // Up
-    case 4: y++; break // Down
-}
+    snake[0].x += dir_x;
+    snake[0].y += dir_y;
 }
 
 
