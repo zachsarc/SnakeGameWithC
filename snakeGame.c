@@ -19,6 +19,16 @@ int length = 5;
 int dir_x, dir_y;
 int gameover = 0;
 
+
+// ---------------------------------
+// Trophy system (JK) 
+int trophy_x, trophy_y;
+int trophy_value;
+time_t trophy_spawn_time;
+int trophy_duration; 
+int trophy_active = 0;
+// ----------------------------------
+
 void init_direction() {//jk
 
     dir_x = 1;   // start moving right
@@ -109,18 +119,51 @@ void move_snake() { //Move the snake forward and update head position
 void draw() { //draw the snake and the border (JK)
     clear();
      box(stdscr, 0, 0);
-
+//draw snake
     for (int i = 0; i < length; i++) {
         mvaddch(snake[i].y, snake[i].x, 'O');}
+        // Draw trophy
+    if (trophy_active) {
+        mvaddch(trophy_y, trophy_x, '0' + trophy_value);
+    }
 refresh();
 }
 
+void spawn_trophy(){
+    trophy_x = rand() % (COLS -2) +1;
+    trophy_y = rand() % (LINES -2) +1;
+    
+trophy_value = rand() % 9 +1;
+  trophy_spawn_time = time(NULL);
+            trophy_duration = rand() % 9 + 1;
+
+        trophy_active = 1;
+}
+
+void trophies(){
+    time_t now = time(NULL);
+
+    if(!trophy_active){
+        spawn_trophy();
+    }
+    // if(){} logic to check the expiration 
+    /*if(){} logic to check if snake eats trophy 
+    This will probably check if snake[].x and y are 
+    at the same x and y as the trophy
+    
+    then if it's true, lenght + value, checking if
+    it's also not more than max value. 
+    */ 
+
+//in game loop, uncomment trophy() when the system is done. (Line 166)
+}
 
 
 void game_loop() {//jk
     while (!gameover) {
         handle_input();
         move_snake();
+        //trophies(); 
         draw();
         usleep(100000); // control speed
     }
