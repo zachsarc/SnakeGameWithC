@@ -18,6 +18,7 @@ int length = 5;
 
 int dir_x, dir_y;
 int gameover = 0;
+int score = 0;
 
 
 // ---------------------------------
@@ -106,6 +107,13 @@ void handle_input() { //keyboard input and change snake direction
 
 
 void move_snake() { //Move the snake forward and update head position
+    // Check boundary collision
+    if (snake[0].x + dir_x < 1 || snake[0].x + dir_x >= COLS - 1 ||
+        snake[0].y + dir_y < 1 || snake[0].y + dir_y >= LINES - 1) {
+        gameover = 1;
+        return;
+    }
+
     for (int i = length - 1; i > 0; i--) {
         snake[i] = snake[i - 1];
     }
@@ -126,6 +134,8 @@ void draw() { //draw the snake and the border (JK)
     if (trophy_active) {
         mvaddch(trophy_y, trophy_x, '0' + trophy_value);
     }
+    // Draw score
+    mvprintw(0, 2, "Score: %d", score);
 refresh();
 }
 
@@ -146,16 +156,19 @@ void trophies(){
     if(!trophy_active){
         spawn_trophy();
     }
-    // if(){} logic to check the expiration 
-    /*if(){} logic to check if snake eats trophy 
-    This will probably check if snake[].x and y are 
-    at the same x and y as the trophy
-    
-    then if it's true, lenght + value, checking if
-    it's also not more than max value. 
-    */ 
-
-//in game loop, uncomment trophy() when the system is done. (Line 166)
+    // Check expiration
+    if (trophy_active && (now - trophy_spawn_time) > trophy_duration) {
+        trophy_active = 0;
+    }
+    // Check if snake eats trophy
+    if (trophy_active && snake[0].x == trophy_x && snake[0].y == trophy_y) {
+        score += trophy_value;
+        if (length < MAX_LENGTH) {
+            length += trophy_value;
+            if (length > MAX_LENGTH) length = MAX_LENGTH;
+        }
+        trophy_active = 0;
+    }
 }
 
 
@@ -163,7 +176,7 @@ void game_loop() {//jk
     while (!gameover) {
         handle_input();
         move_snake();
-        //trophies(); 
+        trophies(); 
         draw();
         usleep(100000); // control speed
     }
@@ -186,6 +199,13 @@ int main() {
     init_direction();
 
     game_loop();
+
+    // Game over message
+    clear();
+    mvprintw(LINES / 2, COLS / 2 - 10, "GAME OVER!");
+    mvprintw(LINES / 2 + 1, COLS / 2 - 12, "Final Score: %d", score);
+    refresh();
+    sleep(2);
 
     endwin();             
     return 0;
