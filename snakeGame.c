@@ -55,9 +55,7 @@ void handle_input() { //keyboard input and change snake direction
             case KEY_LEFT:
             case 'a':
             case 'A':
-                if (dir_x == 1) {
-                    gameover = 1;
-                } else {
+                if (dir_x != 1) { // Ignore opposite direction
                     dir_x = -1;
                     dir_y = 0;
                 }
@@ -66,9 +64,7 @@ void handle_input() { //keyboard input and change snake direction
             case KEY_RIGHT:
             case 'd':
             case 'D':
-                if (dir_x == -1) {
-                    gameover = 1;
-                } else {
+                if (dir_x != -1) { // Ignore opposite direction
                     dir_x = 1;
                     dir_y = 0;
                 }
@@ -77,9 +73,7 @@ void handle_input() { //keyboard input and change snake direction
             case KEY_UP:
             case 'w':
             case 'W':
-                if (dir_y == 1) {
-                    gameover = 1;
-                } else {
+                if (dir_y != 1) { // Ignore opposite direction
                     dir_x = 0;
                     dir_y = -1;
                 }
@@ -88,9 +82,7 @@ void handle_input() { //keyboard input and change snake direction
             case KEY_DOWN:
             case 's':
             case 'S':
-                if (dir_y == -1) {
-                    gameover = 1;
-                } else {
+                if (dir_y != -1) { // Ignore opposite direction
                     dir_x = 0;
                     dir_y = 1;
                 }
@@ -120,6 +112,14 @@ void move_snake() { //Move the snake forward and update head position
 
     snake[0].x += dir_x;
     snake[0].y += dir_y;
+
+    // Check self-collision (Snake hits its own body) //ZL
+    for (int i = 1; i < length; i++) {
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+            gameover = 1;
+            return;
+        }
+    }
 }
 
 
@@ -139,18 +139,31 @@ void draw() { //draw the snake and the border (JK)
 refresh();
 }
 
-void spawn_trophy(){
-    trophy_x = rand() % (COLS -2) +1;
-    trophy_y = rand() % (LINES -2) +1;
+void spawn_trophy(){ //ZL
+    int valid = 0;
+    while (!valid) {
+        trophy_x = rand() % (COLS - 2) + 1;
+        trophy_y = rand() % (LINES - 2) + 1;
+        valid = 1;
+
+        // Ensure trophy doesn't spawn inside the snake
+        for (int i = 0; i < length; i++) {
+            if (snake[i].x == trophy_x && snake[i].y == trophy_y) {
+                valid = 0;
+                break;
+            }
+        }
+    }
+
     
 trophy_value = rand() % 9 +1;
   trophy_spawn_time = time(NULL);
-            trophy_duration = rand() % 9 + 1;
+            trophy_duration = rand() % 21 + 20; // Trophy now lasts between 20 and 40 seconds
 
         trophy_active = 1;
 }
 
-void trophies(){
+void trophies(){ //ZL
     time_t now = time(NULL);
 
     if(!trophy_active){
@@ -178,7 +191,10 @@ void game_loop() {//jk
         move_snake();
         trophies(); 
         draw();
-        usleep(100000); // control speed
+
+        // Speed up slightly as length increases
+        int delay = 80000 - (length * 800);
+        usleep(delay < 35000 ? 35000 : delay); 
     }
 }
 
